@@ -7,6 +7,7 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     @user = users(:michael)
     @activated = users(:archer)
     @not_activated = users(:not_activated)
+    @user.follow(@activated)
   end
 
   test "show activated user" do
@@ -30,5 +31,7 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     @user.microposts.paginate(page: 1).each do |micropost|
       assert_match micropost.content, response.body
     end
+    assert_select 'div.stats>a', /#{@user.following.count}\s+following/
+    assert_select 'div.stats>a', /#{@user.followers.count}\s+followers/
   end
 end
